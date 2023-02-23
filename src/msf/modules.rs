@@ -587,11 +587,10 @@ pub async fn execute(
         let de_ret: Result<res::modules::execute_non_payloads, derror> =
           Deserialize::deserialize(&mut de);
 
-        println!("new_buf {:?}", new_buf);
-        let s = std::str::from_utf8(new_buf.as_slice());
-        println!("{:?}", de_ret);
+        let v: Value = Deserialize::deserialize(&mut de).unwrap();
 
-        println!("{:?}", s);
+        println!("{:?}", v);
+
         if let Err(_) = de_ret {
           let de_ret: MsfError = from_read(new_buf.as_slice()).unwrap();
           test = Err(de_ret);
