@@ -584,12 +584,11 @@ pub async fn execute(
           test = Ok(val.payload);
         };
       } else {
+        let v: Result<Value, derror> = Deserialize::deserialize(&mut de);
+        println!("myv {:?}", v);
+
         let de_ret: Result<res::modules::execute_non_payloads, derror> =
           Deserialize::deserialize(&mut de);
-
-        let v: Value = Deserialize::deserialize(&mut de).unwrap();
-
-        println!("{:?}", v);
 
         if let Err(_) = de_ret {
           let de_ret: MsfError = from_read(new_buf.as_slice()).unwrap();
