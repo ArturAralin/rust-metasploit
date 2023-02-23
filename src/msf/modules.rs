@@ -393,14 +393,12 @@ impl compactible {
     byte.serialize(&mut se).unwrap();
     let con = connect_async(self.client.url.clone(), body, &mut buf).await;
     let new_buf = buf.clone();
-    println!("new_buf {:?}", new_buf);
     let mut de = Deserializer::new(new_buf.as_slice());
     match con {
       Ok(_) => {
         let de_ret: Result<res::modules::compactible_sessions, derror> =
           Deserialize::deserialize(&mut de);
         if let Err(_) = de_ret {
-          println!("new_buf {:?}", de_ret);
           let de_ret: MsfError = from_read(new_buf.as_slice()).unwrap();
           test = Err(de_ret);
         };
@@ -588,6 +586,9 @@ pub async fn execute(
       } else {
         let de_ret: Result<res::modules::execute_non_payloads, derror> =
           Deserialize::deserialize(&mut de);
+
+        println!("new_buf {:?}", new_buf);
+        println!("{:?}", de_ret);
         if let Err(_) = de_ret {
           let de_ret: MsfError = from_read(new_buf.as_slice()).unwrap();
           test = Err(de_ret);
