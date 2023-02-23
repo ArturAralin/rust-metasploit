@@ -1,11 +1,12 @@
 #![allow(non_camel_case_types)]
 use crate::value::Value;
-use serde::Deserialize as des;
-#[derive(des, Debug)]
+use serde::Deserialize;
+
+#[derive(Deserialize, Debug)]
 pub struct list {
   pub modules: Vec<String>,
 }
-#[derive(des, Debug, Clone)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct info {
   pub name: String,
   pub description: String,
@@ -16,7 +17,7 @@ pub struct info {
   pub authors: Vec<String>,
   pub references: Vec<String>,
 }
-#[derive(des, Debug, Clone)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct options {
   pub r#type: String,
   pub required: bool,
@@ -26,24 +27,32 @@ pub struct options {
   pub default: Option<Value>,
   pub enums: Option<Vec<String>>,
 }
-#[derive(des, Debug)]
+#[derive(Deserialize, Debug)]
 pub struct compactible_payloads {
   pub payloads: Vec<String>,
 }
-#[derive(des, Debug)]
+#[derive(Deserialize, Debug)]
 pub struct compactible_sessions {
   pub sessions: Vec<String>,
 }
-#[derive(des, Debug)]
+#[derive(Deserialize, Debug)]
 pub struct encode {
   pub encoded: String,
 }
-#[derive(des, Debug)]
+
+#[derive(Deserialize, Debug)]
+pub struct X {
+  #[serde(rename = "type")]
+  pub type_: String,
+  pub data: Vec<u8>,
+}
+
+#[derive(Deserialize, Debug)]
 pub struct execute_non_payloads {
   pub job_id: i32,
-  pub uuid: Vec<u8>,
+  pub uuid: X,
 }
-#[derive(des, Debug)]
+#[derive(Deserialize, Debug)]
 pub struct execute_payloads {
   pub payload: Value,
 }

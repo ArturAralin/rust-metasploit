@@ -14,8 +14,8 @@ keywords=["metasploit","hacking","msf","penetration"]
 [dependencies]
 reqwest={ version="0.11.6",features=["blocking","json"] }
 rmp-serde="1.0.0-beta.2"
-rmpv={ version = "1.0.0" , features=["with-serde"] }
-serde={ version="1.0.130" , features=["derive"] }
+rmpv={ version = "1.0.0", features=["with-serde"] }
+serde={ version="1.0.130", features=["derive"] }
 tokio={ version="1.14.0" }
 doc-cfg = { version = "0.1" }
 
