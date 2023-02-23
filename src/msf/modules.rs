@@ -587,6 +587,8 @@ pub async fn execute(
         let de_ret: Result<res::modules::execute_non_payloads, derror> =
           Deserialize::deserialize(&mut de);
 
+        println!("{:?}", de_ret);
+
         if let Err(_) = de_ret {
           let de_ret: MsfError = from_read(new_buf.as_slice()).unwrap();
           test = Err(de_ret);
