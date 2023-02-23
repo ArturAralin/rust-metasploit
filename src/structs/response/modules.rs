@@ -41,6 +41,7 @@ pub struct encode {
 #[derive(des, Debug)]
 pub struct execute_non_payloads {
   pub job_id: i32,
+  pub uuid: Vec<u8>,
 }
 #[derive(des, Debug)]
 pub struct execute_payloads {
