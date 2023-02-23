@@ -43,7 +43,7 @@ pub struct encode {
 #[derive(Deserialize, Debug)]
 pub struct execute_non_payloads {
   pub job_id: i32,
-  pub uuid: uuid::Uuid,
+  // pub uuid: uuid::Uuid,
 }
 #[derive(Deserialize, Debug)]
 pub struct execute_payloads {
