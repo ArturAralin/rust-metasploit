@@ -584,7 +584,8 @@ pub async fn execute(
           test = Ok(val.payload);
         };
       } else {
-        let x: Result<Value, derror> = rmp_serde::decode::from_slice(new_buf.as_slice());
+        let x: Result<res::modules::execute_non_payloads, derror> =
+          rmp_serde::decode::from_slice(new_buf.as_slice());
 
         println!("{:?}", x);
 
