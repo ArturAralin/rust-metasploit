@@ -584,9 +584,6 @@ pub async fn execute(
           test = Ok(val.payload);
         };
       } else {
-        let v: Result<Value, derror> = Deserialize::deserialize(&mut de);
-        println!("myv {:?}", v);
-
         let de_ret: Result<res::modules::execute_non_payloads, derror> =
           Deserialize::deserialize(&mut de);
 

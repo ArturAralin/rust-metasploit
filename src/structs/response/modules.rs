@@ -41,16 +41,9 @@ pub struct encode {
 }
 
 #[derive(Deserialize, Debug)]
-pub struct X {
-  #[serde(rename = "type")]
-  pub type_: String,
-  pub data: Vec<u8>,
-}
-
-#[derive(Deserialize, Debug)]
 pub struct execute_non_payloads {
   pub job_id: i32,
-  pub uuid: X,
+  pub uuid: uuid::Uuid,
 }
 #[derive(Deserialize, Debug)]
 pub struct execute_payloads {
