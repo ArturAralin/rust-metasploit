@@ -1,16 +1,15 @@
 #![allow(non_camel_case_types)]
 use serde::Deserialize as des;
 
-#[derive(des,Debug)]
+#[derive(des, Debug)]
 pub struct load {
-    pub result:String,
+  pub result: String,
 }
-#[derive(des,Debug)]
+#[derive(des, Debug)]
 pub struct unload {
-    pub result:String,
+  pub result: String,
 }
-#[derive(des,Debug)]
+#[derive(des, Debug)]
 pub struct loaded {
-    pub plugins:Vec<String>,
+  pub plugins: Vec<String>,
 }
-

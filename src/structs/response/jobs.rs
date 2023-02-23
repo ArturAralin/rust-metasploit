@@ -2,24 +2,23 @@
 #![allow(non_snake_case)]
 use serde::Deserialize as des;
 
-#[derive(des,Debug,Clone)]
+#[derive(des, Debug, Clone)]
 pub struct Data {
-    pub EnableContextEncoding:bool,
-    pub DisablePayloadHandler:bool,
-    pub SSL:bool,
-    pub SSLVersion:String,
-    pub PAYLOAD:String, 
+  pub EnableContextEncoding: bool,
+  pub DisablePayloadHandler: bool,
+  pub SSL: bool,
+  pub SSLVersion: String,
+  pub PAYLOAD: String,
 }
-#[derive(des,Debug,Clone)]
+#[derive(des, Debug, Clone)]
 pub struct info {
-    pub jid:i32,
-    pub name:String,
-    pub start_time:i32,
-    pub uripath:String,
-    pub datastore:Data,
-
+  pub jid: i32,
+  pub name: String,
+  pub start_time: i32,
+  pub uripath: String,
+  pub datastore: Data,
 }
-#[derive(des,Debug)]
+#[derive(des, Debug)]
 pub struct stop {
-    pub result:String,
+  pub result: String,
 }
