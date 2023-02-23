@@ -584,9 +584,9 @@ pub async fn execute(
           test = Ok(val.payload);
         };
       } else {
-        let a: Result<Value, derror> = Deserialize::deserialize(&mut de);
+        let x: Result<Value, derror> = rmp_serde::decode::from_slice(new_buf.as_slice());
 
-        println!("{:?}", a);
+        println!("{:?}", x);
 
         let de_ret: Result<res::modules::execute_non_payloads, derror> =
           Deserialize::deserialize(&mut de);
