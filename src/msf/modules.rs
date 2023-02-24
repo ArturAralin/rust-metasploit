@@ -553,7 +553,7 @@ pub async fn execute(
   module_type: &str,
   module_name: &str,
   options: HashMap<String, String>,
-) -> Result<Value, RpcError> {
+) -> Result<res::modules::ExecuteResponse, RpcError> {
   let body = rmp_serde::to_vec(&req::modules::execute(
     "module.execute".to_string(),
     client.token.unwrap(),
@@ -584,16 +584,14 @@ pub async fn execute(
       }
 
       if module_type == "payload" {
-        let payload_result =
-          rmp_serde::decode::from_slice::<res::modules::execute_payloads>(response.as_slice())?;
-
-        return Ok(payload_result.payload);
+        return Ok(res::modules::ExecuteResponse::Payload(
+          rmp_serde::decode::from_slice::<res::modules::execute_payloads>(response.as_slice())?,
+        ));
       }
 
-      let non_payload_result =
-        rmp_serde::decode::from_slice::<res::modules::execute_non_payloads>(response.as_slice())?;
-
-      Ok(rmpv::Value::from(non_payload_result.job_id))
+      Ok(res::modules::ExecuteResponse::NonPayload(
+        rmp_serde::decode::from_slice::<res::modules::execute_non_payloads>(response.as_slice())?,
+      ))
     }
     Err(_) => {
       panic!("Connection closed unexpectedly");

@@ -48,3 +48,9 @@ pub struct execute_non_payloads {
 pub struct execute_payloads {
   pub payload: Value,
 }
+
+#[derive(Deserialize, Debug)]
+pub enum ExecuteResponse {
+  Payload(execute_payloads),
+  NonPayload(execute_non_payloads),
+}
