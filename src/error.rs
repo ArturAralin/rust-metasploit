@@ -1,7 +1,7 @@
 //! This module is to handle all error responses from RPC Server and to handle Connection Error.
 #![allow(dead_code)]
 use reqwest;
-use serde::Deserialize as des;
+use serde::Deserialize;
 use std::env::var;
 use std::error::Error;
 use std::fmt::{Debug, Display, Formatter, Result};
@@ -10,7 +10,7 @@ use std::fmt::{Debug, Display, Formatter, Result};
 pub type ConnectionError = reqwest::Error;
 
 /// Struct to handle RPC error Responses
-#[derive(des, Debug)]
+#[derive(Deserialize, Debug)]
 /// ```
 /// pub struct MsfError {/*... */}
 /// ```
@@ -27,25 +27,30 @@ pub struct MsfError {
   /// Error Backtrace
   pub error_backtrace: Vec<String>,
 }
+
 impl Error for MsfError {}
 
 impl Display for MsfError {
   fn fmt(&self, f: &mut Formatter) -> Result {
-    let err: String;
-    match var("RUST_BACKTRACE") {
+    let err = match var("RUST_BACKTRACE").as_deref() {
       Ok(val) => {
-        if val == "1".to_string() {
-          err = format!("({},{})", self.error_message, self.error_class).to_string()
-        } else if val == "full".to_string() {
-          err = format!("{:?}", self).to_string();
+        if val == "1" {
+          format!("({},{})", self.error_message, self.error_class)
+        } else if val == "full" {
+          format!("{:?}", self)
         } else {
-          err = format!("{}", self.error_message).to_string();
+          self.error_message.clone()
         }
       }
-      Err(_) => {
-        err = format!("{}", self.error_message);
-      }
-    }
+      Err(_) => self.error_message.clone(),
+    };
+
     write!(f, "{}", err)
   }
+}
+
+#[derive(Debug)]
+pub enum RpcError {
+  MsfError(MsfError),
+  InvalidResponse(rmp_serde::decode::Error),
 }

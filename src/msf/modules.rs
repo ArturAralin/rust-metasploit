@@ -9,7 +9,7 @@ mod error;
 mod structs;
 use crate::{client::Client, value::Value};
 use connect::connect_async;
-use error::MsfError;
+use error::{MsfError, RpcError};
 use rmp_serde::{
   decode::{from_read, Error as derror},
   Deserializer, Serializer,
@@ -553,7 +553,7 @@ pub async fn execute(
   module_type: &str,
   module_name: &str,
   options: HashMap<String, String>,
-) -> Result<Value, MsfError> {
+) -> Result<Value, RpcError> {
   let body = rmp_serde::to_vec(&req::modules::execute(
     "module.execute".to_string(),
     client.token.unwrap(),
@@ -567,13 +567,17 @@ pub async fn execute(
 
   match connect_async(client.url, body, &mut response).await {
     Ok(_) => {
+      let k: rmpv::Value = rmpv::Value::from("error");
+
       rmp_serde::decode::from_slice::<rmpv::Value>(response.as_slice())
         .map(|v| {
+          let x = v.as_map().unwrap().iter().any(|(key, _)| key.eq(&k));
           println!("{:?}", v);
+          println!("is err {:?}", x);
 
           v
         })
-        .map_err(|_| rmp_serde::decode::from_slice::<MsfError>(response.as_slice()).unwrap())
+        .map_err(RpcError::InvalidResponse)
 
       //   if module_type == "payload" {
       //     rmp_serde::decode::from_slice::<res::modules::execute_payloads>(response.as_slice())
