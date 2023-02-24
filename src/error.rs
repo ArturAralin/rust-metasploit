@@ -54,3 +54,9 @@ pub enum RpcError {
   MsfError(MsfError),
   InvalidResponse(rmp_serde::decode::Error),
 }
+
+impl From<rmp_serde::decode::Error> for RpcError {
+  fn from(error: rmp_serde::decode::Error) -> Self {
+    Self::InvalidResponse(error)
+  }
+}

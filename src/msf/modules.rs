@@ -567,27 +567,33 @@ pub async fn execute(
 
   match connect_async(client.url, body, &mut response).await {
     Ok(_) => {
-      let k: rmpv::Value = rmpv::Value::from("error");
+      let error_key: rmpv::Value = rmpv::Value::from("error");
+      let error_val: rmpv::Value = rmpv::Value::from(true);
+      let result_value = rmp_serde::decode::from_slice::<rmpv::Value>(response.as_slice())?;
 
-      rmp_serde::decode::from_slice::<rmpv::Value>(response.as_slice())
-        .map(|v| {
-          let x = v.as_map().unwrap().iter().any(|(key, _)| key.eq(&k));
-          println!("{:?}", v);
-          println!("is err {:?}", x);
+      let is_error = result_value
+        .as_map()
+        .unwrap()
+        .iter()
+        .any(|(key, val)| key.eq(&error_key) && val.eq(&error_val));
 
-          v
-        })
-        .map_err(RpcError::InvalidResponse)
+      if is_error {
+        return Err(RpcError::MsfError(
+          rmp_serde::decode::from_slice::<MsfError>(response.as_slice())?,
+        ));
+      }
 
-      //   if module_type == "payload" {
-      //     rmp_serde::decode::from_slice::<res::modules::execute_payloads>(response.as_slice())
-      //       .map(|data| Value::from(data.job_id))
-      //       .map_err(|_| rmp_serde::decode::from_slice::<MsfError>(response.as_slice()).unwrap())
-      //   } else {
-      //     rmp_serde::decode::from_slice::<res::modules::execute_non_payloads>(response.as_slice())
-      //       .map(|data| Value::from(data.job_id))
-      //       .map_err(|_| rmp_serde::decode::from_slice::<MsfError>(response.as_slice()).unwrap())
-      //   }
+      if module_type == "payload" {
+        let payload_result =
+          rmp_serde::decode::from_slice::<res::modules::execute_payloads>(response.as_slice())?;
+
+        return Ok(payload_result.payload);
+      }
+
+      let non_payload_result =
+        rmp_serde::decode::from_slice::<res::modules::execute_non_payloads>(response.as_slice())?;
+
+      Ok(rmpv::Value::from(non_payload_result.job_id))
     }
     Err(_) => {
       panic!("Connection closed unexpectedly");
