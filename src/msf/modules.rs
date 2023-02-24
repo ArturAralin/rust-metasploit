@@ -550,62 +550,43 @@ pub async fn encoder(
 /// ```
 pub async fn execute(
   client: Client,
-  moduletypestr: &str,
-  modulenamestr: &str,
+  module_type: &str,
+  module_name: &str,
   options: HashMap<String, String>,
 ) -> Result<Value, MsfError> {
-  let moduletype: String = moduletypestr.to_string();
-  let modulename: String = modulenamestr.to_string();
-  let mut test: Result<Value, MsfError> = Ok(Value::from(true));
-  let mut body = Vec::new();
-  let mut buf = vec![];
-  let mut se = Serializer::new(&mut body);
-  let byte = req::modules::execute(
+  let body = rmp_serde::to_vec(&req::modules::execute(
     "module.execute".to_string(),
     client.token.unwrap(),
-    moduletype.clone(),
-    modulename,
+    module_type.to_owned(),
+    module_name.to_owned(),
     options,
-  );
-  byte.serialize(&mut se).unwrap();
-  let con = connect_async(client.url, body, &mut buf).await;
-  let new_buf = buf.clone();
-  let mut de = Deserializer::new(new_buf.as_slice());
-  match con {
+  ))
+  .unwrap();
+
+  let mut response = vec![];
+
+  match connect_async(client.url, body, &mut response).await {
     Ok(_) => {
-      let de_ret_p: Result<res::modules::execute_payloads, derror> =
-        Deserialize::deserialize(&mut de);
-      if moduletype.clone() == "payload".to_string() {
-        if let Err(_) = de_ret_p {
-          let de_ret: MsfError = from_read(new_buf.as_slice()).unwrap();
-          test = Err(de_ret);
-        };
-        if let Ok(val) = de_ret_p {
-          test = Ok(val.payload);
-        };
-      } else {
-        let x: Result<res::modules::execute_non_payloads, derror> =
-          rmp_serde::decode::from_slice(new_buf.as_slice());
+      rmp_serde::decode::from_slice::<rmpv::Value>(response.as_slice())
+        .map(|v| {
+          println!("{:?}", v);
 
-        println!("{:?}", x);
+          v
+        })
+        .map_err(|_| rmp_serde::decode::from_slice::<MsfError>(response.as_slice()).unwrap())
 
-        let de_ret: Result<res::modules::execute_non_payloads, derror> =
-          Deserialize::deserialize(&mut de);
-
-        println!("{:?}", de_ret);
-
-        if let Err(_) = de_ret {
-          let de_ret: MsfError = from_read(new_buf.as_slice()).unwrap();
-          test = Err(de_ret);
-        };
-        if let Ok(val) = de_ret {
-          test = Ok(Value::from(val.job_id));
-        };
-      }
+      //   if module_type == "payload" {
+      //     rmp_serde::decode::from_slice::<res::modules::execute_payloads>(response.as_slice())
+      //       .map(|data| Value::from(data.job_id))
+      //       .map_err(|_| rmp_serde::decode::from_slice::<MsfError>(response.as_slice()).unwrap())
+      //   } else {
+      //     rmp_serde::decode::from_slice::<res::modules::execute_non_payloads>(response.as_slice())
+      //       .map(|data| Value::from(data.job_id))
+      //       .map_err(|_| rmp_serde::decode::from_slice::<MsfError>(response.as_slice()).unwrap())
+      //   }
     }
     Err(_) => {
       panic!("Connection closed unexpectedly");
     }
   }
-  test
 }
