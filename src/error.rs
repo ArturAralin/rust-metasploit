@@ -1,6 +1,5 @@
 //! This module is to handle all error responses from RPC Server and to handle Connection Error.
-#![allow(dead_code)]
-use reqwest;
+
 use serde::Deserialize;
 use std::env::var;
 use std::error::Error;

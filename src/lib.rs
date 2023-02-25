@@ -11,8 +11,10 @@
 //! The above one is a simple example code where an connection is made with RPC Server and the token is printed
 //!
 pub mod client;
+pub mod connect;
 pub mod error;
 pub mod msf;
-#[path = "structs/response/mod.rs"]
-pub mod response;
+pub mod structs;
 pub mod value;
+
+pub use structs::*;

@@ -1,18 +1,14 @@
 //! Module whcih contain all functions for authentication
-#[path = "../connect.rs"]
-mod connect;
-#[path = "../error.rs"]
-mod error;
-#[path = "../structs/mod.rs"]
-mod structs;
+
 use crate::client;
-use error::MsfError;
+use crate::connect;
+use crate::error::MsfError;
+use crate::structs::{request as req, response as res};
 use rmp_serde::{
   Deserializer, Serializer,
   {decode::Error as derror, from_read},
 };
 use serde::{Deserialize, Serialize};
-use structs::{request as req, response as res};
 
 /// To logout from the RPC Server
 ///

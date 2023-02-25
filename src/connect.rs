@@ -1,7 +1,5 @@
+use crate::error::ConnectionError as conerr;
 use reqwest::{blocking, header, Client};
-#[path = "./error.rs"]
-mod error;
-use error::ConnectionError as conerr;
 
 pub fn connect(url: String, body: Vec<u8>, buf: &mut Vec<u8>) -> Result<(), conerr> {
   let mut header = header::HeaderMap::new();

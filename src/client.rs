@@ -1,18 +1,15 @@
 //! This module is to initialize and maintain the connection
 //! ## Example
 //! ```
-//! use metasploit::client::Client;
-//! fn main() {
-//!     let client=Client::new("127.0.0.1",4040,"user","password",true);
-//! }
+//!use metasploit::client::Client;
+//!let client = Client::new("127.0.0.1", 4040, "user", "password", true);
 //! ```
-#[path = "./connect.rs"]
-mod connect;
-#[path = "./structs/mod.rs"]
-mod structs;
+
+use crate::connect;
+use crate::structs::{request::auth::login, response::auth::login as reslogin};
 use rmp_serde::{decode::Error, Deserializer, Serializer};
 use serde::{Deserialize, Serialize};
-use structs::{request::auth::login, response::auth::login as reslogin};
+
 #[derive(Debug, Clone)]
 /// Struct which is used to initialize and maintain connection.
 pub struct Client {
