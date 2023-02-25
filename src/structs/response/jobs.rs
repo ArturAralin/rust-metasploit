@@ -2,13 +2,13 @@
 #![allow(non_snake_case)]
 use serde::Deserialize;
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Debug, Clone, Default)]
 pub struct Data {
-  pub EnableContextEncoding: bool,
-  pub DisablePayloadHandler: bool,
-  pub SSL: bool,
-  pub SSLVersion: String,
-  pub PAYLOAD: String,
+  pub EnableContextEncoding: Option<bool>,
+  pub DisablePayloadHandler: Option<bool>,
+  pub SSL: Option<bool>,
+  pub SSLVersion: Option<String>,
+  pub PAYLOAD: Option<String>,
 }
 
 #[derive(Deserialize, Debug, Clone)]

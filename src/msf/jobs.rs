@@ -79,13 +79,7 @@ pub async fn info(client: Client, job_id: u32) -> Result<res::jobs::info, RpcErr
     start_time: 0,
     name: String::new(),
     uripath: String::new(),
-    datastore: res::jobs::Data {
-      EnableContextEncoding: true,
-      DisablePayloadHandler: true,
-      SSL: true,
-      SSLVersion: String::new(),
-      PAYLOAD: String::new(),
-    },
+    datastore: Default::default(),
   });
 
   let body = rmp_serde::encode::to_vec(&req::jobs::info(
