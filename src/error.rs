@@ -52,10 +52,17 @@ impl Display for MsfError {
 pub enum RpcError {
   MsfError(MsfError),
   InvalidResponse(rmp_serde::decode::Error),
+  InvalidRequestArgs(rmp_serde::encode::Error),
 }
 
 impl From<rmp_serde::decode::Error> for RpcError {
   fn from(error: rmp_serde::decode::Error) -> Self {
     Self::InvalidResponse(error)
+  }
+}
+
+impl From<rmp_serde::encode::Error> for RpcError {
+  fn from(error: rmp_serde::encode::Error) -> Self {
+    Self::InvalidRequestArgs(error)
   }
 }

@@ -1,20 +1,14 @@
 //! A module to handle the jobs in Metasploit
-#[path = "../connect.rs"]
-mod connect;
-#[path = "../error.rs"]
-mod error;
-#[path = "../structs/mod.rs"]
-mod structs;
 use crate::client::Client;
-use connect::connect_async;
-use error::MsfError;
+use crate::connect::connect_async;
+use crate::error::{MsfError, RpcError};
+use crate::structs::{request as req, response as res};
 use rmp_serde::{
   decode::{from_read, Error as derror},
   Deserializer, Serializer,
 };
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use structs::{request as req, response as res};
 
 /// To list all the currently running jobs
 ///
@@ -77,9 +71,10 @@ pub async fn list(client: Client) -> Result<HashMap<String, String>, MsfError> {
 ///     auth::logout(client.clone()).await.unwrap();
 /// }
 /// ```
-pub async fn info(client: Client, jobidstr: &str) -> Result<res::jobs::info, MsfError> {
-  let jobid: String = jobidstr.to_string();
-  let mut test: Result<res::jobs::info, MsfError> = Ok(res::jobs::info {
+pub async fn info(client: Client, job_id: u32) -> Result<res::jobs::info, RpcError> {
+  let job_id: String = job_id.to_string();
+
+  let mut test: Result<res::jobs::info, RpcError> = Ok(res::jobs::info {
     jid: 0,
     start_time: 0,
     name: String::new(),
@@ -92,29 +87,35 @@ pub async fn info(client: Client, jobidstr: &str) -> Result<res::jobs::info, Msf
       PAYLOAD: String::new(),
     },
   });
-  let mut body = Vec::new();
-  let mut buf = vec![];
-  let mut se = Serializer::new(&mut body);
-  let byte = req::jobs::info("job.info".to_string(), client.token.unwrap(), jobid);
-  byte.serialize(&mut se).unwrap();
-  let con = connect_async(client.url, body, &mut buf).await;
-  let new_buf = buf.clone();
-  let mut de = Deserializer::new(new_buf.as_slice());
-  match con {
+
+  let body = rmp_serde::encode::to_vec(&req::jobs::info(
+    "job.info".to_string(),
+    client.token.unwrap(),
+    job_id,
+  ))?;
+
+  let mut result = vec![];
+
+  match connect_async(client.url, body, &mut result).await {
     Ok(_) => {
-      let de_ret: Result<res::jobs::info, derror> = Deserialize::deserialize(&mut de);
-      if let Ok(ref val) = de_ret {
-        test = Ok(val.clone());
-      };
-      if let Err(_) = de_ret {
-        let de_ret: MsfError = from_read(new_buf.as_slice()).unwrap();
-        test = Err(de_ret);
-      };
+      let result: rmpv::Value = rmp_serde::decode::from_slice(&result)?;
+
+      println!("{:#?}", result);
+      // let de_ret: Result<res::jobs::info, derror> = Deserialize::deserialize(&mut de);
+      // if let Ok(ref val) = de_ret {
+      //   test = Ok(val.clone());
+      // };
+
+      // if let Err(_) = de_ret {
+      //   // let de_ret: MsfError = from_read(new_buf.as_slice()).unwrap();
+      //   // test = Err(de_ret);
+      // };
     }
     Err(_) => {
       panic!("Connection closed unexpectedly");
     }
   }
+
   test
 }
 /// To stop a specified job

@@ -47,9 +47,8 @@ pub struct encode {
 
 #[derive(Deserialize, Debug)]
 pub struct execute_non_payloads {
-  pub job_id: i32,
+  pub job_id: u32,
 }
-
 #[derive(Deserialize, Debug)]
 pub struct execute_payloads {
   pub payload: Value,
