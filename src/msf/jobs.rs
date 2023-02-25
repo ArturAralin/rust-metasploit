@@ -93,13 +93,9 @@ pub async fn info(client: Client, job_id: u32) -> Result<res::jobs::info, RpcErr
   match connect_async(client.url, body, &mut result).await {
     Ok(_) => {
       println!("{:?}", result);
-      let x: rmpv::Value = rmp_serde::decode::from_slice(&result)?;
-
       let r = rmp_serde::decode::from_slice::<res::jobs::info>(&result)?;
 
-      // println!("{:?}", r);
-
-      println!("{:#?}", x);
+      println!("{:?}", r);
       // let de_ret: Result<res::jobs::info, derror> = Deserialize::deserialize(&mut de);
       // if let Ok(ref val) = de_ret {
       //   test = Ok(val.clone());
