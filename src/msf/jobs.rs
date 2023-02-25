@@ -78,7 +78,7 @@ pub async fn info(client: Client, job_id: u32) -> Result<res::jobs::info, RpcErr
     jid: 0,
     start_time: 0,
     name: String::new(),
-    uripath: String::new(),
+    uripath: None,
     datastore: Default::default(),
   });
 
