@@ -16,7 +16,7 @@ pub struct info {
   pub jid: i32,
   pub name: String,
   pub start_time: i32,
-  pub uripath: String,
+  pub uripath: Option<String>,
   pub datastore: Data,
 }
 
