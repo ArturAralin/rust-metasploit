@@ -6,6 +6,7 @@ use serde::Deserialize;
 pub struct list {
   pub modules: Vec<String>,
 }
+
 #[derive(Deserialize, Debug, Clone)]
 pub struct info {
   pub name: String,
@@ -17,6 +18,7 @@ pub struct info {
   pub authors: Vec<String>,
   pub references: Vec<String>,
 }
+
 #[derive(Deserialize, Debug, Clone)]
 pub struct options {
   pub r#type: String,
@@ -27,14 +29,17 @@ pub struct options {
   pub default: Option<Value>,
   pub enums: Option<Vec<String>>,
 }
+
 #[derive(Deserialize, Debug)]
 pub struct compactible_payloads {
   pub payloads: Vec<String>,
 }
+
 #[derive(Deserialize, Debug)]
 pub struct compactible_sessions {
   pub sessions: Vec<String>,
 }
+
 #[derive(Deserialize, Debug)]
 pub struct encode {
   pub encoded: String,
@@ -44,6 +49,7 @@ pub struct encode {
 pub struct execute_non_payloads {
   pub job_id: i32,
 }
+
 #[derive(Deserialize, Debug)]
 pub struct execute_payloads {
   pub payload: Value,

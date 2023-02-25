@@ -1,22 +1,16 @@
 //! A module to handle all the modules in Metasploit RPC
 #![allow(non_camel_case_types)]
 #![allow(unused_assignments)]
-#[path = "../connect.rs"]
-mod connect;
-#[path = "../error.rs"]
-mod error;
-#[path = "../structs/mod.rs"]
-mod structs;
-use crate::{client::Client, value::Value};
-use connect::connect_async;
-use error::{MsfError, RpcError};
+use crate::client::Client;
+use crate::connect::connect_async;
+use crate::error::{MsfError, RpcError};
+use crate::structs::{request as req, response as res};
 use rmp_serde::{
   decode::{from_read, Error as derror},
   Deserializer, Serializer,
 };
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use structs::{request as req, response as res};
 
 /// To list the compactible payloads and sessions
 pub struct compactible {
