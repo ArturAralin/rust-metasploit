@@ -74,7 +74,7 @@ pub async fn list(client: Client) -> Result<HashMap<String, String>, MsfError> {
 pub async fn info(client: Client, job_id: u32) -> Result<res::jobs::info, RpcError> {
   let job_id: String = job_id.to_string();
 
-  let mut test: Result<res::jobs::info, RpcError> = Ok(res::jobs::info {
+  let test: Result<res::jobs::info, RpcError> = Ok(res::jobs::info {
     jid: 0,
     start_time: 0,
     name: String::new(),
@@ -92,6 +92,7 @@ pub async fn info(client: Client, job_id: u32) -> Result<res::jobs::info, RpcErr
 
   match connect_async(client.url, body, &mut result).await {
     Ok(_) => {
+      println!("{:?}", result);
       let x: rmpv::Value = rmp_serde::decode::from_slice(&result)?;
 
       let r = rmp_serde::decode::from_slice::<res::jobs::info>(&result)?;
